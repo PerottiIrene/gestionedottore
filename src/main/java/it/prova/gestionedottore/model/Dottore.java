@@ -43,6 +43,17 @@ public class Dottore {
 		this.inVisita = inVisita;
 		this.inServizio = inServizio;
 	}
+	
+	public Dottore(String nome, String cognome, String codiceDottore, String codiceFiscalePazienteAttualmenteInVisita,
+			boolean inVisita, boolean inServizio) {
+		super();
+		this.nome = nome;
+		this.cognome = cognome;
+		this.codiceDottore = codiceDottore;
+		this.codiceFiscalePazienteAttualmenteInVisita = codiceFiscalePazienteAttualmenteInVisita;
+		this.inVisita = inVisita;
+		this.inServizio = inServizio;
+	}
 
 	public Long getId() {
 		return id;

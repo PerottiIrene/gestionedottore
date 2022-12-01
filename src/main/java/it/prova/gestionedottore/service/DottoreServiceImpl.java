@@ -3,10 +3,12 @@ package it.prova.gestionedottore.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import it.prova.gestionedottore.model.Dottore;
 import it.prova.gestionedottore.repository.DottoreRepository;
 
+@Service
 public class DottoreServiceImpl implements DottoreService{
 	
 	@Autowired
