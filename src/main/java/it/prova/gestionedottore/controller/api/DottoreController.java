@@ -86,8 +86,8 @@ public class DottoreController {
 		dottoreService.rimuovi(id);
 	}
 	
-	@GetMapping("/verificaDisponibilita/{cd}")
-	public DottoreDTO verificaDisponibilita(@PathVariable(value = "cd", required = true)String codiceDottore) {
+	@GetMapping("/verificaDisponibilita/{codiceDottore}")
+	public DottoreDTO verificaDisponibilita(@PathVariable(value = "codiceDottore", required = true)String codiceDottore) {
 		
 		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
 		
@@ -98,11 +98,11 @@ public class DottoreController {
 		return DottoreDTO.buildDottoreDTOFromModel(result);
 	}
 	
-	@PostMapping("/impostaInVisita/{cd}")
+	@PostMapping("/impostaInVisita")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public DottoreDTO impostaInVisita(@Valid @RequestBody DottoreDTO input, @PathVariable(value = "cd",required = true)  String codiceDottore) {
+	public DottoreDTO impostaInVisita(@Valid @RequestBody DottoreDTO input) {
 
-		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
+		Dottore result=dottoreService.findByCodiceDipendente(input.getCodiceDottore());
 		// ANDREBBE GESTITA CON ADVICE!!!
 		// se mi viene inviato un id jpa lo interpreta come update ed a me (producer)
 		// non sta bene
@@ -117,7 +117,24 @@ public class DottoreController {
 		return DottoreDTO.buildDottoreDTOFromModel(result);
 	}
 	
-	
+	@GetMapping("/terminaVisita/{codiceDottore}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public DottoreDTO terminaVisita(@Valid @PathVariable(value = "codiceDottore",required = true)String codiceDottore) {
+
+		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
+		// ANDREBBE GESTITA CON ADVICE!!!
+		// se mi viene inviato un id jpa lo interpreta come update ed a me (producer)
+		// non sta bene
+		if (result.getId() == null)
+			throw new RuntimeException("Dottore not found ");
+
+		result.setInVisita(false);
+		result.setCodiceFiscalePazienteAttualmenteInVisita(null);
+		
+		dottoreService.aggiorna(result);
+		
+		return DottoreDTO.buildDottoreDTOFromModel(result);
+	}
 	
 
 }
