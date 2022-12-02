@@ -54,7 +54,7 @@ public class DottoreController {
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public DottoreDTO update(@Valid @RequestBody DottoreDTO input, @PathVariable(required = true)  Long id) {
+	public DottoreDTO update(@Valid @RequestBody DottoreDTO input, @PathVariable(required = true) Long id) {
 
 		Dottore dottore = dottoreService.caricaSingoloElemento(id);
 		// ANDREBBE GESTITA CON ADVICE!!!
@@ -85,24 +85,25 @@ public class DottoreController {
 
 		dottoreService.rimuovi(id);
 	}
-	
+
 	@GetMapping("/verificaDisponibilita/{codiceDottore}")
-	public DottoreDTO verificaDisponibilita(@PathVariable(value = "codiceDottore", required = true)String codiceDottore) {
-		
-		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
-		
-		if(result.isInVisita()) {
+	public DottoreDTO verificaDisponibilita(
+			@PathVariable(value = "codiceDottore", required = true) String codiceDottore) {
+
+		Dottore result = dottoreService.findByCodiceDipendente(codiceDottore);
+
+		if (result.isInVisita()) {
 			throw new RuntimeException("dottore non disponible, in visita");
 		}
-		
+
 		return DottoreDTO.buildDottoreDTOFromModel(result);
 	}
-	
+
 	@PostMapping("/impostaInVisita")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public DottoreDTO impostaInVisita(@Valid @RequestBody DottoreDTO input) {
 
-		Dottore result=dottoreService.findByCodiceDipendente(input.getCodiceDottore());
+		Dottore result = dottoreService.findByCodiceDipendente(input.getCodiceDottore());
 		// ANDREBBE GESTITA CON ADVICE!!!
 		// se mi viene inviato un id jpa lo interpreta come update ed a me (producer)
 		// non sta bene
@@ -111,17 +112,18 @@ public class DottoreController {
 
 		result.setInVisita(true);
 		result.setCodiceFiscalePazienteAttualmenteInVisita(input.getCodiceFiscalePazienteAttualmenteInVisita());
-		
+
 		dottoreService.aggiorna(result);
-		
+
 		return DottoreDTO.buildDottoreDTOFromModel(result);
 	}
-	
+
 	@GetMapping("/terminaVisita/{codiceDottore}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public DottoreDTO terminaVisita(@Valid @PathVariable(value = "codiceDottore",required = true)String codiceDottore) {
+	public DottoreDTO terminaVisita(
+			@Valid @PathVariable(value = "codiceDottore", required = true) String codiceDottore) {
 
-		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
+		Dottore result = dottoreService.findByCodiceDipendente(codiceDottore);
 		// ANDREBBE GESTITA CON ADVICE!!!
 		// se mi viene inviato un id jpa lo interpreta come update ed a me (producer)
 		// non sta bene
@@ -130,11 +132,21 @@ public class DottoreController {
 
 		result.setInVisita(false);
 		result.setCodiceFiscalePazienteAttualmenteInVisita(null);
-		
+
 		dottoreService.aggiorna(result);
-		
+
 		return DottoreDTO.buildDottoreDTOFromModel(result);
 	}
-	
+
+	@PostMapping("/ricovera")
+	public DottoreDTO ricovera(@Valid @RequestBody DottoreDTO dottore) {
+		Dottore dottoreReloaded = dottoreService.findByCodiceDipendente(dottore.getCodiceDottore());
+
+		dottoreReloaded.setCodiceFiscalePazienteAttualmenteInVisita(null);
+		dottoreReloaded.setInVisita(false);
+		dottoreService.aggiorna(dottoreReloaded);
+		return dottore;
+
+	}
 
 }
