@@ -85,5 +85,39 @@ public class DottoreController {
 
 		dottoreService.rimuovi(id);
 	}
+	
+	@GetMapping("/verificaDisponibilita/{cd}")
+	public DottoreDTO verificaDisponibilita(@PathVariable(value = "cd", required = true)String codiceDottore) {
+		
+		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
+		
+		if(result.isInVisita()) {
+			throw new RuntimeException("dottore non disponible, in visita");
+		}
+		
+		return DottoreDTO.buildDottoreDTOFromModel(result);
+	}
+	
+	@PostMapping("/impostaInVisita/{cd}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public DottoreDTO impostaInVisita(@Valid @RequestBody DottoreDTO input, @PathVariable(value = "cd",required = true)  String codiceDottore) {
+
+		Dottore result=dottoreService.findByCodiceDipendente(codiceDottore);
+		// ANDREBBE GESTITA CON ADVICE!!!
+		// se mi viene inviato un id jpa lo interpreta come update ed a me (producer)
+		// non sta bene
+		if (result.getId() == null)
+			throw new RuntimeException("Dottore not found ");
+
+		result.setInVisita(true);
+		result.setCodiceFiscalePazienteAttualmenteInVisita(input.getCodiceFiscalePazienteAttualmenteInVisita());
+		
+		dottoreService.aggiorna(result);
+		
+		return DottoreDTO.buildDottoreDTOFromModel(result);
+	}
+	
+	
+	
 
 }

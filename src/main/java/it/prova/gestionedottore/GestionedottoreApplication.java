@@ -21,7 +21,7 @@ public class GestionedottoreApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		// Popolo DB
-		repository.save(new Dottore("Mario","Rossi","MARROSS78P1", "PRTF653DRT",true,false));
+		repository.save(new Dottore("Mario","Rossi","MARROSS78P1", "PRTF653DRT",false,true));
 		repository.save(new Dottore("Irene","Rossi","IPRTRN642P1", "CFDS5678JH",true,false));
 		repository.save(new Dottore("Mario","Bianchi","BVCDS568DS", "NBVDSQA875",false,true));
 		
